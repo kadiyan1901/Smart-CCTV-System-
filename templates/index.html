@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Smart CCTV System</title>
+</head>
+<body>
+    <h1>Smart CCTV System</h1>
+    <img src="{{ url_for('video_feed') }}" width="640" height="480">
+    <form id="monitoring-hours-form">
+        <label for="start">Start Time:</label>
+        <input type="time" id="start" name="start" required>
+        <label for="end">End Time:</label>
+        <input type="time" id="end" name="end" required>
+        <button type="submit">Update Monitoring Hours</button>
+    </form>
+    <p id="status"></p>
+    <script>
+        document.getElementById('monitoring-hours-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const start = document.getElementById('start').value;
+            const end = document.getElementById('end').value;
+            fetch('/set_hours', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ start, end })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('status').textContent = data.message;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('status').textContent = 'Failed to update monitoring hours';
+            });
+        });
+    </script>
+</body>
+</html>
